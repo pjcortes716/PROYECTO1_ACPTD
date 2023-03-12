@@ -393,4 +393,3 @@ ST_depresion,electro_card,max_h_rate,pendiente,fluor):
 
 if __name__ == '__main__':
     app.run_server(debug=True)
-
