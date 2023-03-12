@@ -103,6 +103,7 @@ server = app.server
 app.layout = html.Div([
     html.Div(children=[
     html.H1("Gráficas"),
+    html.Img(src="assets/University_of_Los_Andes_logo.png",style={'width': '10%', 'float': 'right','padding': '10px'}),
     html.Label("Máxima frecuencia cardíaca"),
     dcc.Input(placeholder="Valor sin unidades",
               type="number",
@@ -133,7 +134,6 @@ app.layout = html.Div([
     html.Div([dcc.Graph(id="graficaMFCyColesterol"),dcc.Graph(id="graficaPresionyColesterol"),dcc.Graph(id="graficaTipoDeDoloryPresion")]),
     ]
     ),
-    
     html.Div(children=[html.Br(), html.Button('Generar Gráficas', id='generar', n_clicks=0,style={'font-size': '12px', 
     'width': '1985px', 'display': 'inline-block', 
     'margin-bottom': '10px', 'margin-right': '5px', 'height':'37px', 'verticalAlign': 'top'})]),
