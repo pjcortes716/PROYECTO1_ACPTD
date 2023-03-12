@@ -11,12 +11,14 @@ import plotly.graph_objs as go
 #importamos las librerias para la red bayesiana
 from pgmpy.models import BayesianNetwork
 from pgmpy.estimators import MaximumLikelihoodEstimator
+from pgmpy.inference import VariableElimination
 #importamos los datos ya limpios de heart_desease
 heart_desease=pd.read_csv(str(os.getcwd())+"/"+"datos_para_red")
 #construimos la red, con los nodos:
 modelo=BayesianNetwork([('E','A'),('E','H'),('C','EC'),('S','EC'),('T','EC'),('A','EC'),
                         ('H','EC'),('EC','RE'),('EC','HR'),('EC','P'),('EC','AI'),('EC','SER'),
                         ('EC','F'),('EC','D'),('S','D')])
+
 
 #Datos
 heart_disease=pd.read_csv(str(os.getcwd())+"/"+"datos_para_grafica")
@@ -86,6 +88,7 @@ lowerICDolorPechoEnfermo=math.floor(mediaMuestralDolorPechoEnfermo-tDolorPechoEn
 #entrenamos la red con los datos cargados
 modelo.fit(data=heart_desease,estimator=MaximumLikelihoodEstimator)
 
+infer=VariableElimination(modelo)
 
 
 #creamos el objeto dash
@@ -182,7 +185,8 @@ app.layout = html.Div([
         html.Label('¿El examen de fluoroscopia muestra algun vaso sanguineo resaltado?'),
         dcc.Dropdown(["Si","No"],id="fluor"),
         html.Br(),
-        html.Label('Calcular probabilidad de enfermedad cardiaca'),
+        #html.Label('Calcular probabilidad de enfermedad cardiaca'),
+        html.Div(id="probabilidad")
         
 
         
@@ -247,6 +251,104 @@ def actualizarGraficaMFCyColesterol(n_clicks, MFC, Colesterol, Presion, TipoDolo
         graph3=go.Figure(data=[scatterSano3, scatterEnfermo3,puntoPaciente3, rectSano3, rectEnfermo3], layout=layoutGraph3)
     return graph1,graph2,graph3
 
+@app.callback(
+    Output("probabilidad","children"),
+    [Input('calcular','n_clicks'),
+    Input('edad','value'),
+    Input('sexo','value'),
+    Input('colesterol','value'),
+    Input('diabetes','value'),
+    Input('presion','value'),
+    Input('dolor_pecho','value'),
+    Input('angina_inducida','value'),
+    Input('talasemia','value'),
+    Input('ST_depresion','value'),
+    Input('electro_card','value'),
+    Input('max_h_rate','value'),
+    Input('pendiente','value'),
+    Input('fluor','value'),
+   ]
+)
+def estimar_enfermedad_card(n_clicks,edad,sexo,colesterol,diabetes,presion,dolor_pecho,angina_inducida,talasemia,
+ST_depresion,electro_card,max_h_rate,pendiente,fluor):
+    if n_clicks==0:#inicializa el mensaje en vacio
+        return "Ingrese la informacion del paciente en las casillas y de clic en el boton de calcular"
+    else:
+        evidencia={}#creamos un diccionario vacio para la evidencia
+        #verificamos el valor de la edad
+        if edad=="Mayor de 60 años":
+            evidencia["E"]=1
+        elif edad=="Menor de 60 años":
+            evidencia["E"]=0
+        #verificamos el sexo
+        if sexo=="Hombre":
+            evidencia["S"]=1
+        elif sexo=="Mujer":
+            evidencia["S"]=0
+        #verificamos colesterol:
+        if colesterol=="Si":
+            evidencia["C"]=1
+        elif colesterol=="No":
+            evidencia["C"]=0
+        #verificamos la diabetes:
+        if diabetes=="Si":
+            evidencia["A"]=1
+        elif diabetes=="No":
+            evidencia["A"]=0
+        #verificamos la presion arterial:
+        if presion=="Si":
+            evidencia["P"]=1
+        elif presion=="No":
+            evidencia["P"]=0
+        #verificamos el dolor de pecho:
+        if dolor_pecho=="Si":
+            evidencia["D"]=1
+        elif dolor_pecho=="No":
+            evidencia["D"]=0
+        #verificamos la angina inducida
+        if angina_inducida=="Si":
+            evidencia["AI"]=1
+        elif angina_inducida=="No":
+            evidencia["AI"]=0
+        #verificamos la talasemia
+        if talasemia=="Sufre Talasemia":
+            evidencia["T"]=1
+        elif talasemia=="No sufre talasemia":
+            evidencia["T"]=0
+        #verificamos st_depresion
+        if ST_depresion=="Depresion de pico de ejercicio normal":
+            evidencia["SER"]=0
+        elif ST_depresion=="Depresion de pico de ejercicio >1mm":
+            evidencia["SER"]=1
+        #verificamos la forma de la onda del electrocardiograma:
+        if electro_card=="Si":
+            evidencia.setdefault("RE", 0)
+            #evidencia['RE']==0
+        elif electro_card=="No":
+            evidencia.setdefault("RE", 1)
+            #evidencia['RE']==1
+        #verificamos la maxima frecuencia cardiaca
+        if max_h_rate=="Si":
+            evidencia["HR"]=0
+        elif max_h_rate=="No":
+            evidencia["HR"]=1
+        #verificamos la pendiente del electro:
+        if pendiente=="Si":
+            evidencia["P"]=0
+        elif pendiente=="No":
+            evidencia["P"]=1
+        #verificmos el examen de fluoresencia:
+        if fluor=="Si":
+            evidencia["F"]=1
+        elif fluor=="No":
+            evidencia["F"]=0
+        #hacemos la inferencia de la probabilidad
+        caso_a = infer.query(["EC"] , evidence =evidencia)
+        print(evidencia)
+        print(caso_a)
+        respuesta="La probabilidad de que el paciente tenga una enfermedad cardiaca es de {}".format(caso_a.values[1])
+        return respuesta
+    
 
         
     
