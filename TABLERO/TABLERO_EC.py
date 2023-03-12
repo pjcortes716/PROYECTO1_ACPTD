@@ -22,6 +22,7 @@ modelo=BayesianNetwork([('E','A'),('E','H'),('C','EC'),('S','EC'),('T','EC'),('A
 
 #Datos
 heart_disease=pd.read_csv(str(os.getcwd())+"/"+"datos_para_grafica")
+#Se importan los Datos
 datosMaximaFrecuenciaCardiaca=heart_disease.loc[:,["ENFERMEDAD_CARD","MAX_HEART_R"]]
 datosMaximaFrecuenciaCardiacaSano=datosMaximaFrecuenciaCardiaca[["ENFERMEDAD_CARD","MAX_HEART_R"]][datosMaximaFrecuenciaCardiaca["ENFERMEDAD_CARD"]=="Sano"]
 datosMaximaFrecuenciaCardiacaEnfermo=datosMaximaFrecuenciaCardiaca[["ENFERMEDAD_CARD","MAX_HEART_R"]][datosMaximaFrecuenciaCardiaca["ENFERMEDAD_CARD"]=="Enfermo"]
@@ -34,6 +35,10 @@ datosPresionSanguineaEnfermo=datosPresionSanguinea[["ENFERMEDAD_CARD","PRESION_S
 datosDolorPecho=heart_disease.loc[:,["ENFERMEDAD_CARD","DOLOR_PECHO"]]
 datosDolorPechoSano=datosDolorPecho[["ENFERMEDAD_CARD","DOLOR_PECHO"]][datosDolorPecho["ENFERMEDAD_CARD"]=="Sano"]
 datosDolorPechoEnfermo=datosDolorPecho[["ENFERMEDAD_CARD","DOLOR_PECHO"]][datosDolorPecho["ENFERMEDAD_CARD"]=="Enfermo"]
+#En el anterior bloque de codigo lo que se hace para Presion, MPC, Colesterol, y Tipo de Dolor de pecho es:
+#1.Extraer los datos del DF de la variable junto a una variable que dice si la persona esta enferma o no [ENFERMEDAD_CARD], creando un nuevo DF
+#2.Se filtran los datos y se crea 2 nuevos DF uno para los que estan enfermos y otro para los saludables
+
 #Estadisticas
 mediaMuestralFreqSano=datosMaximaFrecuenciaCardiacaSano["MAX_HEART_R"].mean()
 mediaMuestralFreqEnfermo=datosMaximaFrecuenciaCardiacaEnfermo["MAX_HEART_R"].mean()
@@ -67,7 +72,12 @@ tDolorPechoSano=t.ppf(1-0.0001/2,dfDolorPechoSano,loc=0, scale=1)
 tDolorPechoEnfermo=t.ppf(1-0.0001/2,dfDolorPechoEnfermo,loc=0, scale=1)
 varianzaMuestralDolorPechoSano=(datosDolorPechoSano["DOLOR_PECHO"].astype(int)).var()
 varianzaMuestralDolorPechoEnfermo=(datosDolorPechoEnfermo["DOLOR_PECHO"].astype(int)).var()
-#Intervalos
+#En el anterior bloque de codigo lo que se hace para Presion, MPC, Colesterol, y Tipo de Dolor de pecho es:
+#1. Se calcula la media muestral para el grupo de datos de personas saludable y enfermas
+#2. Se calcula la varianza muestral para el grupo de datos de personas saludable y enfermas
+#3. Dado que se piensa hacer pruebas t simples se determina que los grados de libertad es n_ij-1 donde i pertence Presion, MPC, Colesterol, Tipo de Dolor de pecho, 
+#y j pertence a enfermo, saludable
+#4. Se calcula la t para cada muestra con un alpha de 0.0001
 upperICFreqSano=mediaMuestralFreqSano+tFreqSano*math.sqrt(varianzaMuestralFreqSano/(dfFreqSano+1))
 lowerICFreqSano=mediaMuestralFreqSano-tFreqSano*math.sqrt(varianzaMuestralFreqSano/(dfFreqSano+1))
 upperICFreqEnfermo=mediaMuestralFreqEnfermo+tFreqEnfermo*math.sqrt(varianzaMuestralFreqEnfermo/(dfFreqEnfermo+1))
@@ -84,8 +94,10 @@ upperICDolorPechoSano=math.floor(mediaMuestralDolorPechoSano+tDolorPechoSano*mat
 lowerICDolorPechoSano=math.floor(mediaMuestralDolorPechoSano-tDolorPechoSano*math.sqrt(varianzaMuestralDolorPechoSano/(dfPresionSano+1)))
 upperICDolorPechoEnfermo=round(mediaMuestralDolorPechoEnfermo+tDolorPechoEnfermo*math.sqrt(varianzaMuestralDolorPechoEnfermo/(dfPresionEnfermo+1)))
 lowerICDolorPechoEnfermo=math.floor(mediaMuestralDolorPechoEnfermo-tDolorPechoEnfermo*math.sqrt(varianzaMuestralDolorPechoEnfermo/(dfPresionEnfermo+1)))
+#En el anterior bloque de codigo lo que se hace para Presion, MPC, Colesterol, y Tipo de Dolor de pecho es:
+#1. Se generan el limite tanto superior como inferior del interalo de confianza para todas las combinaciones ij donde i pertence Presion, MPC, Colesterol, Tipo de Dolor de pecho, 
+#y j pertence a enfermo, saludable
 
-#entrenamos la red con los datos cargados
 modelo.fit(data=heart_desease,estimator=MaximumLikelihoodEstimator)
 
 infer=VariableElimination(modelo)
@@ -102,7 +114,8 @@ server = app.server
 
 app.layout = html.Div([
     html.Div(children=[
-    html.H1("Gráficas"),
+    html.H1("Gráficas",
+    ),
     html.Img(src="assets/University_of_Los_Andes_logo.png",style={'width': '10%', 'float': 'right','padding': '10px'}),
     html.Label("Máxima frecuencia cardíaca"),
     dcc.Input(placeholder="Valor sin unidades",
@@ -201,6 +214,9 @@ app.layout = html.Div([
     'margin-bottom': '10px', 'margin-right': '5px', 'height':'37px', 'verticalAlign': 'top'})])
    
 ])
+#Queremos que la funcion cambien las graficas por eso los outputs son las figures de las 3 graficas
+#De ipunts tenemos el boton
+#Y states los valores que inserta el usuario
 @app.callback(
     [Output("graficaMFCyColesterol","figure"), Output("graficaPresionyColesterol","figure"), Output("graficaTipoDeDoloryPresion","figure")],
     [Input("generar","n_clicks")],
@@ -250,6 +266,7 @@ def actualizarGraficaMFCyColesterol(n_clicks, MFC, Colesterol, Presion, TipoDolo
         puntoPaciente3=go.Scatter(x=[Presion],y=[TipoDolor], mode="markers", marker=dict(symbol="x",color="black",size=10), name="Paciente Actual")
         graph3=go.Figure(data=[scatterSano3, scatterEnfermo3,puntoPaciente3, rectSano3, rectEnfermo3], layout=layoutGraph3)
     return graph1,graph2,graph3
+#Con los intervalos previos y los datos de las personas saludables y enfermas se generan los graficos y el cuadro de IC, si el boton se presiona se capta los valores en la input box y se añade ese valor al grafico como una cruz negra
 
 @app.callback(
     Output("probabilidad","children"),
