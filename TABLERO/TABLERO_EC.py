@@ -116,13 +116,13 @@ app.layout = html.Div([
     html.Div(children=[
     html.Div(children=[html.Img(src="assets/University_of_Los_Andes_logo.png",style={'width': '40%', 'float': 'left','padding': '5px'})],
     style={'width': '10%', 'display': 'inline-block'}),
-    html.Div(children=[html.H1("Predictor de enfermedades cardiacas uniandes",style={'textAlign': 'left','color': 'black', 'fontSize': 85}
+    html.Div(children=[html.H1("Predictor de enfermedades cardiacas uniandes",style={'textAlign': 'left','color': 'black', 'fontSize': 70}
     ),],style={'width': '90%', 'display': 'inline-block'}),    
     #html.H1("Gráficas",
     #),
     
     #html.Img(src="assets/University_of_Los_Andes_logo.png",style={'width': '10%', 'float': 'right','padding': '10px'}),
-    html.Br(),html.Label("Ingrese a cotinuacion algunos datos de triage del paciente para obtener una visualizacion de su sitación",style={'textAlign': 'left','color': 'black', 'fontSize': 40}),
+    html.Br(),html.Label("Ingrese a cotinuacion algunos datos de triage del paciente para obtener una visualizacion de su sitación",style={'textAlign': 'left','color': 'black', 'fontSize': 30}),
     html.Br(),
     html.Div(children=[html.Label("Máxima frecuencia cardíaca",style={'textAlign': 'left','color': 'black', 'fontSize': 20}),
     dcc.Input(placeholder="Valor sin unidades",
@@ -220,7 +220,7 @@ app.layout = html.Div([
         dcc.Dropdown(["Si","No"],id="fluor"),
         html.Br(),
         #html.Label('Calcular probabilidad de enfermedad cardiaca'),
-        html.Div(id="probabilidad",style={'textAlign': 'center','color': 'black', 'fontSize': 18})
+        html.Div(id="probabilidad",style={'textAlign': 'center','color': 'black', 'fontSize': 15})
         
 
         
@@ -387,47 +387,5 @@ ST_depresion,electro_card,max_h_rate,pendiente,fluor):
         respuesta="La probabilidad de que el paciente tenga una enfermedad cardiaca es de {}".format(caso_a.values[1])
         return respuesta
     
-
-        
-    
-    
-
-
-#@app.callback(
-#    Output('graph-with-slider', 'figure'),
-#    [Input('dropdown', 'value')])
-#def update_figure(country):
-#    afg=df[df["country"]==country]
-#    fig = px.line(afg, x="year", y="pop", title='Population in '+country,labels={"year":"year","pop":"population (Millions of people)"})
-#    return fig
-
-
-
-
-
-
-    #filtered_df = df[df.year == selected_year]
-
-    #fig = px.scatter(filtered_df, x="gdpPercap", y="lifeExp", 
-    #                 size="pop", color="continent", hover_name="country", 
-    #                 log_x=True, size_max=55,
-     #                labels={
-      #               "pop": "Population",
-       #              "gdpPercap": "GDP per cápita",
-        #             "lifeExp": "Life Expectancy",
-         ##           },
-           #          title="Life expectancy vs. GDP per cápita across the years")
-
-    #fig.update_layout(transition_duration=500)
-#    return fig
-
-#@app.callback(Output('graph-gdp', 'figure'),
-#    [Input('dropdown', 'value')])
-#def second_figure(country):
-#    afg=df[df["country"]==country]
-#    fig=px.line(afg, x="year", y="gdpPercap", title='GDP per capita of '+country,labels={"year":"year","gdpPercap":"Gross domestic product per capita"})
-#    return fig
-
-
 if __name__ == '__main__':
     app.run_server(debug=True)
