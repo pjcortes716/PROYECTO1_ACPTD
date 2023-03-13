@@ -114,45 +114,66 @@ server = app.server
 
 app.layout = html.Div([
     html.Div(children=[
-    html.H1("Gráficas",
-    ),
-    html.Img(src="assets/University_of_Los_Andes_logo.png",style={'width': '10%', 'float': 'right','padding': '10px'}),
-    html.Label("Máxima frecuencia cardíaca"),
-    dcc.Input(placeholder="Valor sin unidades",
-              type="number",
-              value=0,
-              id="MFCGraficas"
-    ),
+    html.Div(children=[html.Img(src="assets/University_of_Los_Andes_logo.png",style={'width': '40%', 'float': 'left','padding': '5px'})],
+    style={'width': '10%', 'display': 'inline-block'}),
+    html.Div(children=[html.H1("Predictor de enfermedades cardiacas uniandes",style={'textAlign': 'left','color': 'black', 'fontSize': 85}
+    ),],style={'width': '90%', 'display': 'inline-block'}),    
+    #html.H1("Gráficas",
+    #),
+    
+    #html.Img(src="assets/University_of_Los_Andes_logo.png",style={'width': '10%', 'float': 'right','padding': '10px'}),
+    html.Br(),html.Label("Ingrese a cotinuacion algunos datos de triage del paciente para obtener una visualizacion de su sitación",style={'textAlign': 'left','color': 'black', 'fontSize': 40}),
     html.Br(),
-    html.Label("Colesterol"),
+    html.Div(children=[html.Label("Máxima frecuencia cardíaca",style={'textAlign': 'left','color': 'black', 'fontSize': 20}),
     dcc.Input(placeholder="Valor sin unidades",
               type="number",
               value=0,
-              id="ColesterolGraficas"
-    ),
-    html.Br(),
-    html.Label("Presión sanguinea"),
+              id="MFCGraficas",style={'width': '100%',"display":"flex", "justifyContent":'center'}
+    )],style={'width': '50%', 'display': 'inline-block'}),
+    html.Div(children=[html.Label("Colesterol",style={'textAlign': 'left','color': 'black', 'fontSize': 20}),
     dcc.Input(placeholder="Valor sin unidades",
               type="number",
               value=0,
-              id="PresionGraficas"
-    ),
-    html.Br(),
-    html.Label(['Tipo de dolor en el pecho:', html.Br(),'1: Angina tipica',html.Br(), '2: Angina no tipica',html.Br(), '3: dolor no anginal',html.Br(),'4: asintomatico']),
+              id="ColesterolGraficas",style={'width': '100%',"display":"flex", "justifyContent":'center'}
+    )],style={'width': '50%', 'display': 'inline-block'}),
+  
+    
+    
+    
+    html.Br(),html.Br(),
+
+    html.Div(children=[html.Label("Presión sanguinea", style={'textAlign': 'left','color': 'black', 'fontSize': 20}),
     dcc.Input(placeholder="Valor sin unidades",
               type="number",
               value=0,
-              id="TipoDolorGraficas"
-    ),
+              id="PresionGraficas",style={'width': '100%',"display":"flex", "justifyContent":'center'}
+    )],style={'width': '50%', 'display': 'inline-block'}),
+
+    html.Div(children=[html.Label(['Tipo de dolor en el pecho: 1=Angina tipica, 2=Angina no tipica, 3=dolor no anginal, 4=asintomatico'],
+    style={'textAlign': 'left','color': 'black', 'fontSize': 20}),
+    dcc.Input(placeholder="Valor sin unidades",
+              type="number",
+              value=0,
+              id="TipoDolorGraficas",style={'width': '100%',"display":"flex", "justifyContent":'center'}
+    )],style={'width': '50%', 'display': 'inline-block'}),
+
+
+
+
+
+
+    
+    
+    
     html.Div([dcc.Graph(id="graficaMFCyColesterol"),dcc.Graph(id="graficaPresionyColesterol"),dcc.Graph(id="graficaTipoDeDoloryPresion")]),
     ]
     ),
     html.Div(children=[html.Br(), html.Button('Generar Gráficas', id='generar', n_clicks=0,style={'font-size': '12px', 
-    'width': '1985px', 'display': 'inline-block', 
+    'width': '100%', 'display': 'inline-block', 
     'margin-bottom': '10px', 'margin-right': '5px', 'height':'37px', 'verticalAlign': 'top'})]),
     html.Br(),
     html.Div(children=[
-        html.H1("Red"),
+        html.H1("Ingrese los datos detallados de la historia clinica del paciente para hacer una prediccion", style={'font-size':25}),
         html.Label('Edad'),
         dcc.Dropdown(["Mayor de 60 años","Menor de 60 años"],id="edad"),
         html.Br(),
@@ -178,7 +199,7 @@ app.layout = html.Div([
 
 
         
-    ],style={'width': '49%', 'display': 'inline-block'}),
+    ],style={'width': '50%', 'display': 'inline-block'}),
     html.Div(children=[
         html.Label('¿Talasemia?'),
         dcc.Dropdown(["Sufre Talasemia","No sufre talasemia"],id="talasemia"),
@@ -199,7 +220,7 @@ app.layout = html.Div([
         dcc.Dropdown(["Si","No"],id="fluor"),
         html.Br(),
         #html.Label('Calcular probabilidad de enfermedad cardiaca'),
-        html.Div(id="probabilidad")
+        html.Div(id="probabilidad",style={'textAlign': 'center','color': 'black', 'fontSize': 18})
         
 
         
@@ -208,9 +229,9 @@ app.layout = html.Div([
 
 
 
-    ],style={'width': '49%', 'display': 'inline-block'}),
+    ],style={'width': '50%', 'display': 'inline-block'}),
     html.Div(children=[html.Br(), html.Button('Calcular probabilidad de enfermedad cardiaca', id='calcular', n_clicks=0,style={'font-size': '12px', 
-    'width': '1985px', 'display': 'inline-block', 
+    'width': '100%', 'display': 'inline-block', 
     'margin-bottom': '10px', 'margin-right': '5px', 'height':'37px', 'verticalAlign': 'top'})])
    
 ])
