@@ -367,9 +367,9 @@ ST_depresion,electro_card,max_h_rate,pendiente,fluor):
             #evidencia['RE']==1
         #verificamos la maxima frecuencia cardiaca
         if max_h_rate=="Si":
-            evidencia["HR"]=0
-        elif max_h_rate=="No":
             evidencia["HR"]=1
+        elif max_h_rate=="No":
+            evidencia["HR"]=0
         #verificamos la pendiente del electro:
         if pendiente=="Si":
             evidencia["P"]=0
